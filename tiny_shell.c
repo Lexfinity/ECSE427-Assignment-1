@@ -1,3 +1,13 @@
+/**
+ *  ECSE 427 Assignment 1
+ *  Ammar Rudani
+ *  260804420
+ *  
+ */ 
+
+
+
+
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,54 +19,42 @@
 #include <sched.h>
 #include <signal.h>
 
-
+//defining buffer, variable and array that will be used in the shell
 #define BUFSIZE 64
 #define TOKEN_DELIM " \t\r\n\a"
 char *history[100];
 int history_count = 0;
-char * lastCommand;
 #define HISTORY_LENGTH 100;
 
-
-// int shell_history(char *command )
-// {
-//    if (history_count < 100) {
-//         history[history_count++] = strdup( command );
-//    } else {
-//         free( history[0] );
-//         for (unsigned index = 1; index < 100; index++) {
-//             history[index - 1] = history[index];
-//         }
-//         history[100 - 1] = strdup( command );
-//     }
-// }
 
 
 int shell_cd(char **args);
 int shell_exit(char **args);
-int shell_history();
+int shell_history(char * command);
 
 
+//Shell Command key words
 char *shellCommand[] = {
   "cd",
   "exit",
   "chdir",
-  "history"
 };
 
-
+//Shell functions associated with the key words
 int (*shellFunctions[]) (char **) = {
+  
   &shell_cd,
   &shell_exit,
   &shell_cd,
-  &shell_history
+
 };
 
 int shellCommandLength() {
   return sizeof(shellCommand) / sizeof(char *);
 }
 
-
+//cd function, called when the first argument in command line is cd or chdir, checks for a valid second input
+// for which to change directories to. 
 int shell_cd(char **args)
 {
   if (args[1] == NULL) {
@@ -69,56 +67,48 @@ int shell_cd(char **args)
   return 1;
 }
 
-
+//exit shell function
 int shell_exit(char **args){ return 0; }
 
-int shell_history() {
 
-    int count = history_count;
-    //  % 100;
-    while(count < 100) {
-        if(history[count] !=NULL) {
-            printf("%s\n", history[count]);
-        }
-        count++;
+//history function used to keep track of all the commands made in the shell.
+// array holds 100 command inputs, and if hsitory exceeds 100
+// the history array deletes the oldest command in the array and moves every other command
+// down by one index to make room for new command 
+int shell_history(char *currCommand) {
+  if(history_count < 100) {
+    history[history_count++] = strdup(currCommand);
+  }
+  else {
+    free(history[0]);
+    for(int i = 1; i < 100; i++) {
+      history[i-1] = history[i];
     }
-    int i;
-    // while(count < (history_count%100)) {
-    for(i = 0; i < history_count; i++) {
-        if(history[i] != NULL) {
-        printf("%s\n", history[i]);
-    }
-        // count++;
-    }
-    return 1;
+    history[100 - 1] = strdup(currCommand);
+  }
+  return 1;
+}
+
+//get function to print the commands stored in history array
+int get_Shell_History() {
+  int i = 0;
+  while(i != 100 && history[i] !=NULL) {
+    printf("%s\n", history[i]);
+    i++;
+  }
+  return 1;
 }
 
 
-// int lsh_launch(char **args)
-// {
-  // pid_t pid, wpid;
-  // int status;
+{ struct rlimit rl = {32000, 32000}; setrlimit(RLIMIT_AS, &rl); }
 
-  // pid = fork();
-  // if (pid == 0) {
-  //   // Child process
-  //   if (execvp(args[0], args) == -1) {
-  //     perror("lsh");
-  //   }
-  //   exit(EXIT_FAILURE);
-  // } else if (pid < 0) {
-  //   // Error forking
-  //   perror("lsh");
-  // } else {
-  //   // Parent process
-  //   do {
-  //     wpid = waitpid(pid, &status, WUNTRACED);
-  //   } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-  // }
+if (setrlimit(RLIMIT_DATA, &new) == -1) {
+        fprintf(stderr, "%s\n", "Limit: Memory allocation failed");
+        return EXIT_FAILURE;
+    }
 
-  // return 1;
-// }
-
+//Signal function used to interrupt shell and ask for confirmation to terminate shell
+// used with the ^C signal. 
 void signal_exit(int sig){
 
     signal(SIGINT, SIG_IGN);
@@ -143,6 +133,10 @@ void signal_exit(int sig){
     getchar();
 }
 
+
+
+//Signal function used to ignore the ^Z command in the shell 
+// used with the ^Z signal.
 void signal_ignore(int sig) {
     signal(SIGINT, SIG_IGN);
     signal(SIGTSTP, SIG_IGN);
@@ -150,30 +144,31 @@ void signal_ignore(int sig) {
     fflush(stdout);
 }
 
+
+// funcion that is the executable function for commands
+// after line has been read and interpretted
 int my_system(char **args)
 {
 signal(SIGINT, signal_ignore);
 signal(SIGINT, signal_exit);
 
-lastCommand = history[history_count -1];
-history[history_count] = args[0];
-history_count = history_count + 1;
-
-
-
   int i;
 
+//no command was entered
   if (args[0] == NULL) {
-    // An empty command was entered.
     return 1;
   }
 
-//   else if (strcmp(args[0], "history") == 0) {
-//       shell_history();
-//   } 
+//if history command entered shell prints all commands in history
+  else if (strcmp(args[0], "history") == 0) {
+      printHistory();
+
+  } 
 
   else {
-
+  //if any other internal command is called, the arg[0] (command keyword) 
+  //will be searched for in shellCommand, and its associated function
+  //from shellFunctions, will execute
   for (i = 0; i < shellCommandLength(); i++) {
     if (strcmp(args[0], shellCommand[i]) == 0) {
       return (*shellFunctions[i])(args);
@@ -226,25 +221,28 @@ char **parse(char *line)
   int bufsize = 64,
   position = 0;
   char **tokens = malloc(bufsize * sizeof(char*));
-  char *token;
+  char *tok;
 
   if (!tokens) {
     fprintf(stderr, "allocation error\n");
     exit(EXIT_FAILURE);
   }
 
-  token = strtok(line, TOKEN_DELIM);
+  tok = strtok(line, TOKEN_DELIM);
 
-  while (token != NULL) {
-    tokens[position] = token;
+  while (tok != NULL) {
+    tokens[position] = tok;
     position++;
 
 
-    token = strtok(NULL, TOKEN_DELIM);
+    tok = strtok(NULL, TOKEN_DELIM);
   }
+
   tokens[position] = NULL;
   return tokens;
 }
+
+
 
 
 void get_a_line(void)
@@ -252,12 +250,15 @@ void get_a_line(void)
   char *line;
   char **args;
   int status;
+  int hist;
+
 
   do {
     printf("my_tiny_shell > ");
     line = read_line();
     args = parse(line);
     status = my_system(args);
+    hist = shell_history(line);
 
     free(line);
     free(args);

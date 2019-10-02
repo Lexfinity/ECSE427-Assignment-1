@@ -1,0 +1,70 @@
+ltrace results:
+
+
+printf("my_tiny_shell > ")                                                                            = 16
+getline(0x7fffd3136e58, 0x7fffd3136e60, 0x7f4955deba00, 0x7fffd3136e60)                               = 5
+malloc(512)                                                                                           = 0x7fffcb965700
+strtok("dir\r\n", " \t\r\n\a")                                                                        = "dir"
+strtok(nil, " \t\r\n\a")                                                                              = nil
+signal(SIGINT, 0x7f4956200e40)                                                                        = 0
+signal(SIGINT, 0x7f4956200dcf)                                                                        = 0x7f4956200e40
+strcmp("dir", "history")                                                                              = -4
+strcmp("dir", "cd")                                                                                   = 1
+strcmp("dir", "exit")                                                                                 = -1
+strcmp("dir", "chdir")                                                                                = 1
+fork()                                                                                                = 132
+waitpid(132, 0x7fffd3136e58, 2test.txt  tiny_shell  tiny_shell.c
+ <no return ...>
+--- SIGCHLD (Child exited) ---
+<... waitpid resumed> )                                                                               = 132
+free(0x7fffcb965470)                                                                                  = <void>
+free(0x7fffcb965700)                                                                                  = <void>
+printf("my_tiny_shell > ")                                                                            = 16
+getline(0x7fffd3136e58, 0x7fffd3136e60, 0x7f4955deba00, 0x7fffd3136e60)                               = 5
+malloc(512)                                                                                           = 0x7fffcb965700
+strtok("pwd\r\n", " \t\r\n\a")                                                                        = "pwd"
+strtok(nil, " \t\r\n\a")                                                                              = nil
+signal(SIGINT, 0x7f4956200e40)                                                                        = 0x7f4956200dcf
+signal(SIGINT, 0x7f4956200dcf)                                                                        = 0x7f4956200e40
+strcmp("pwd", "history")                                                                              = 8
+strcmp("pwd", "cd")                                                                                   = 13
+strcmp("pwd", "exit")                                                                                 = 11
+strcmp("pwd", "chdir")                                                                                = 13
+fork()                                                                                                = 133
+waitpid(133, 0x7fffd3136e58, 2/mnt/c/users/aarud/onedrive/documents/mcgill/semester 5/os/os assignments/assignment 1/minia1/ecse427-assignment-1
+ <no return ...>
+--- SIGCHLD (Child exited) ---
+<... waitpid resumed> )                                                                               = 133
+free(0x7fffcb965470)                                                                                  = <void>
+free(0x7fffcb965700)                                                                                  = <void>
+printf("my_tiny_shell > ")                                                                            = 16
+getline(0x7fffd3136e58, 0x7fffd3136e60, 0x7f4955deba00, 0x7fffd3136e60)                               = 4
+malloc(512)                                                                                           = 0x7fffcb965700
+strtok("ls\r\n", " \t\r\n\a")                                                                         = "ls"
+strtok(nil, " \t\r\n\a")                                                                              = nil
+signal(SIGINT, 0x7f4956200e40)                                                                        = 0x7f4956200dcf
+signal(SIGINT, 0x7f4956200dcf)                                                                        = 0x7f4956200e40
+strcmp("ls", "history")                                                                               = 4
+strcmp("ls", "cd")                                                                                    = 9
+strcmp("ls", "exit")                                                                                  = 7
+strcmp("ls", "chdir")                                                                                 = 9
+fork()                                                                                                = 134
+waitpid(134, 0x7fffd3136e58, 2test.txt  tiny_shell  tiny_shell.c
+ <no return ...>
+--- SIGCHLD (Child exited) ---
+<... waitpid resumed> )                                                                               = 134
+free(0x7fffcb965470)                                                                                  = <void>
+free(0x7fffcb965700)                                                                                  = <void>
+printf("my_tiny_shell > ")                                                                            = 16
+getline(0x7fffd3136e58, 0x7fffd3136e60, 0x7f4955deba00, 0x7fffd3136e60)                               = 4
+malloc(512)                                                                                           = 0x7fffcb965700
+strtok("exit", " \t\r\n\a")                                                                           = "exit"
+strtok(nil, " \t\r\n\a")                                                                              = nil
+signal(SIGINT, 0x7f4956200e40)                                                                        = 0x7f4956200dcf
+signal(SIGINT, 0x7f4956200dcf)                                                                        = 0x7f4956200e40
+strcmp("exit", "history")                                                                             = -3
+strcmp("exit", "cd")                                                                                  = 2
+strcmp("exit", "exit")                                                                                = 0
+free(0x7fffcb965470)                                                                                  = <void>
+free(0x7fffcb965700)                                                                                  = <void>
+my_tiny_shell > my_tiny_shell > my_tiny_shell > my_tiny_shell > +++ exited (status 0) +++
