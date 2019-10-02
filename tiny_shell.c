@@ -29,8 +29,8 @@ int history_count = 0;
 
 
 int shell_cd(char **args);
-int shell_exit(char **args);
 int shell_history(char * command);
+int shell_exit(char **args);
 
 
 //Shell Command key words
@@ -67,7 +67,7 @@ int shell_cd(char **args)
   return 1;
 }
 
-//exit shell function
+//exit shell function, added to as the last command to txt files to exit after last command
 int shell_exit(char **args){ return 0; }
 
 
@@ -77,11 +77,16 @@ int shell_exit(char **args){ return 0; }
 // down by one index to make room for new command 
 int shell_history(char *currCommand) {
   if(history_count < 100) {
-    history[history_count++] = strdup(currCommand);
+
+    history[history_count] = strdup(currCommand);
+    history_count++;
   }
   else {
+
     free(history[0]);
+
     for(int i = 1; i < 100; i++) {
+
       history[i-1] = history[i];
     }
     history[100 - 1] = strdup(currCommand);
@@ -98,14 +103,6 @@ int get_Shell_History() {
   }
   return 1;
 }
-
-
-{ struct rlimit rl = {32000, 32000}; setrlimit(RLIMIT_AS, &rl); }
-
-if (setrlimit(RLIMIT_DATA, &new) == -1) {
-        fprintf(stderr, "%s\n", "Limit: Memory allocation failed");
-        return EXIT_FAILURE;
-    }
 
 //Signal function used to interrupt shell and ask for confirmation to terminate shell
 // used with the ^C signal. 
@@ -134,7 +131,6 @@ void signal_exit(int sig){
 }
 
 
-
 //Signal function used to ignore the ^Z command in the shell 
 // used with the ^Z signal.
 void signal_ignore(int sig) {
@@ -161,7 +157,7 @@ signal(SIGINT, signal_exit);
 
 //if history command entered shell prints all commands in history
   else if (strcmp(args[0], "history") == 0) {
-      printHistory();
+      get_Shell_History();
 
   } 
 
@@ -206,6 +202,7 @@ signal(SIGINT, signal_exit);
 }
 }
 
+//read the input line from the shell
 char *read_line(void)
 {
   char *line = NULL;
@@ -215,7 +212,7 @@ char *read_line(void)
 }
 
 
-
+//tokenizes the input of the line
 char **parse(char *line)
 {
   int bufsize = 64,
@@ -244,7 +241,7 @@ char **parse(char *line)
 
 
 
-
+//Function to get and tokenize the input line, then enter my_system to do the appropriate execution of the command 
 void get_a_line(void)
 {
   char *line;
@@ -257,15 +254,18 @@ void get_a_line(void)
     printf("my_tiny_shell > ");
     line = read_line();
     args = parse(line);
-    status = my_system(args);
     hist = shell_history(line);
+    status = my_system(args);
 
     free(line);
+
     free(args);
-  } while (status);
+  } 
+  
+  while (status);
 }
 
-
+//Main function that loops get a line
 int main(int argc, char **argv) {
 
   get_a_line();
