@@ -19,12 +19,10 @@
 #include <sched.h>
 #include <signal.h>
 
-//defining buffer, variable and array that will be used in the shell
-#define BUFSIZE 64
+//defining variables and array that will be used in the shell
 #define TOKEN_DELIM " \t\r\n\a"
 char *history[100];
 int history_count = 0;
-#define HISTORY_LENGTH 100;
 
 
 
@@ -41,8 +39,7 @@ char *shellCommand[] = {
 };
 
 //Shell functions associated with the key words
-int (*shellFunctions[]) (char **) = {
-  
+int (*shellFunctions[]) (char**) = {
   &shell_cd,
   &shell_exit,
   &shell_cd,
@@ -50,7 +47,7 @@ int (*shellFunctions[]) (char **) = {
 };
 
 int shellCommandLength() {
-  return sizeof(shellCommand) / sizeof(char *);
+  return sizeof(shellCommand) / sizeof(char * );
 }
 
 //cd function, called when the first argument in command line is cd or chdir, checks for a valid second input

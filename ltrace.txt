@@ -1,4 +1,8 @@
+Ammar Rudani
+260804420
+
 ltrace results:
+
 
 
 printf("my_tiny_shell > ")                                                                            = 16

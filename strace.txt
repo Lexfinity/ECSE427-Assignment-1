@@ -1,3 +1,6 @@
+Ammar Rudani
+260804420
+
 strace results:
 
 execve("./tiny_shell", ["./tiny_shell"], 0x7fffec7a41c0 /* 18 vars */) = 0
